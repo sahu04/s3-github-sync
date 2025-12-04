@@ -23,7 +23,14 @@ jobs:
         run: |
           aws s3 sync s3://github-s3-sync1234 ./ --exclude ".git/*"
 
+      - name: Commit and push changes from S3 to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --cached --quiet || git commit -m "Sync files from S3 [skip ci]"
+          git push origin master
+
       - name: Sync from repo to S3 (upload)
         run: |
           aws s3 sync ./ s3://github-s3-sync1234 --delete --exclude ".git/*"
-
